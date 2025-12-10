@@ -1,5 +1,6 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import { translations } from '../i18n/translations';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AppContext = createContext();
 
@@ -36,28 +37,82 @@ export const themeColors = {
     }
 };
 
-export const AppProvider = ({ children }) => {
-    const [locale, setLocale] = useState('en'); // Defaults to 'en' as requested
-    const [theme, setTheme] = useState('light');
+export const APP_CURRENCIES = [
+    { code: 'EUR', symbol: '€', label: 'Euro (€)' },
+    { code: 'USD', symbol: '$', label: 'USD ($)' },
+    { code: 'TRY', symbol: '₺', label: 'TL (₺)' },
+    { code: 'GBP', symbol: '£', label: 'GBP (£)' },
+];
 
-    // Translation helper
+export const AppProvider = ({ children }) => {
+    const [locale, setLocale] = useState('en');
+    const [theme, setTheme] = useState('light');
+    const [currency, setCurrency] = useState('EUR'); // Default EUR
+
+    // Load persistence
+    useEffect(() => {
+        const loadSettings = async () => {
+            try {
+                const storedLocale = await AsyncStorage.getItem('app_locale');
+                const storedTheme = await AsyncStorage.getItem('app_theme');
+                const storedCurrency = await AsyncStorage.getItem('app_currency');
+
+                if (storedLocale) setLocale(storedLocale);
+                if (storedTheme) setTheme(storedTheme);
+                if (storedCurrency) setCurrency(storedCurrency);
+            } catch (e) {
+                console.error("Failed to load settings", e);
+            }
+        };
+        loadSettings();
+    }, []);
+
+    // Save Persistence helpers
+    const saveSetting = async (key, value) => {
+        try {
+            await AsyncStorage.setItem(key, value);
+        } catch (e) {
+            console.error("Failed to save setting", key, e);
+        }
+    };
+
     const t = (key, params = {}) => {
         let text = translations[locale][key] || key;
-
-        // Simple interpolation: Replaces %{param}% with value
         Object.keys(params).forEach(param => {
             text = text.replace(`%{${param}}%`, params[param]);
         });
-
         return text;
     };
 
     const toggleTheme = () => {
-        setTheme(prev => prev === 'light' ? 'dark' : 'light');
+        const newTheme = theme === 'light' ? 'dark' : 'light';
+        setTheme(newTheme);
+        saveSetting('app_theme', newTheme);
     };
 
     const switchLanguage = (lang) => {
         setLocale(lang);
+        saveSetting('app_locale', lang);
+    };
+
+    const switchCurrency = (curr) => {
+        setCurrency(curr);
+        saveSetting('app_currency', curr);
+    };
+
+    const formatPrice = (amount) => {
+        if (typeof amount !== 'number') return amount;
+
+        try {
+            return new Intl.NumberFormat(locale, {
+                style: 'currency',
+                currency: currency,
+            }).format(amount);
+        } catch (error) {
+            // Fallback if Intl is not fully supported or error occurs
+            const symbol = APP_CURRENCIES.find(c => c.code === currency)?.symbol || currency;
+            return `${symbol} ${amount.toFixed(2)}`;
+        }
     };
 
     const colors = themeColors[theme];
@@ -66,10 +121,13 @@ export const AppProvider = ({ children }) => {
         <AppContext.Provider value={{
             locale,
             theme,
+            currency,
             colors,
             t,
+            formatPrice,
             toggleTheme,
-            switchLanguage
+            switchLanguage,
+            switchCurrency
         }}>
             {children}
         </AppContext.Provider>

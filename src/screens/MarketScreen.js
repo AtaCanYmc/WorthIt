@@ -9,7 +9,7 @@ export default function MarketScreen() {
     const [prodA, setProdA] = useState({ price: '', quantity: '' });
     const [prodB, setProdB] = useState({ price: '', quantity: '' });
     const [result, setResult] = useState(null);
-    const { t, colors } = useApp();
+    const { t, colors, formatPrice, locale } = useApp();
 
     const handleCompare = () => {
         const a = { price: parseFloat(prodA.price), quantity: parseFloat(prodA.quantity) };
@@ -25,40 +25,6 @@ export default function MarketScreen() {
         setProdB({ price: '', quantity: '' });
         setResult(null);
     };
-
-    const getComparisonText = () => {
-        if (!result) return null;
-        if (result.betterDeal === 'EQUAL') {
-            return t('equal_price');
-        }
-
-        // This is a bit complex for simple interpolation, so I'll handle styling manually here for now,
-        // or we could use a library like react-native-i18n for rich text, but keeping it simple as per instructions.
-        // We will construct the logical parts.
-
-        const winner = result.betterDeal;
-        const percent = result.savingsPercent;
-
-        // "Product {winner} is %{percent}% cheaper!"
-        // We'll return a React Node for custom styling
-        return (
-            <Text style={[styles.resultText, { color: colors.text }]}>
-                <Text style={{ fontWeight: 'bold' }}>{winner === 'A' ? t('product_a') : t('product_b')}</Text>
-                {' '}{t('more_expensive').split('%{percent}%')[1] ? '... ' : ' '}
-                {/* Re-using logic or just simplifying for this specific sentence structure challenge without complex i18n lib */}
-                {/* Let's simplify and use the hardcoded structure but with translated labels to be safe */}
-
-                {locale === 'en' ? ` is ` : `, diğerine göre `}
-                <Text style={{ color: colors.success, fontWeight: 'bold' }}>%{percent} </Text>
-                {locale === 'en' ? ` cheaper!` : ` daha hesaplı!`}
-            </Text>
-        );
-    };
-
-    // Better Approach for clean code:
-    // We already have t('cheaper_alert', { winner, percent }). 
-    // But basic t() returns string. We need to render it.
-    // Let's implement a simple parser for <bold> and <green> in the render.
 
     const renderStyledText = (textWithTags) => {
         const parts = textWithTags.split(/(<bold>.*?<\/bold>|<green>.*?<\/green>)/g);
@@ -121,7 +87,7 @@ export default function MarketScreen() {
                             />
                             {result && (
                                 <Text style={[styles.unitPrice, { color: colors.subText }]}>
-                                    {result.unitPriceA?.toFixed(4)} TL/{t('per_unit')}
+                                    {formatPrice(result.unitPriceA)}/{t('per_unit')}
                                 </Text>
                             )}
                         </View>
@@ -154,7 +120,7 @@ export default function MarketScreen() {
                             />
                             {result && (
                                 <Text style={[styles.unitPrice, { color: colors.subText }]}>
-                                    {result.unitPriceB?.toFixed(4)} TL/{t('per_unit')}
+                                    {formatPrice(result.unitPriceB)}/{t('per_unit')}
                                 </Text>
                             )}
                         </View>

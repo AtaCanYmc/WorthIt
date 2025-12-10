@@ -11,7 +11,7 @@ export default function CoffeeScreen() {
     const [volume, setVolume] = useState('');
     const [name, setName] = useState('');
     const [selectedPreset, setSelectedPreset] = useState(null);
-    const { t, colors } = useApp();
+    const { t, colors, formatPrice } = useApp();
 
     const handleSelectPreset = (size) => {
         setSelectedPreset(size.id);
@@ -110,7 +110,7 @@ export default function CoffeeScreen() {
                             />
                             <TextInput
                                 style={[styles.input, { flex: 1, backgroundColor: colors.inputBg, borderColor: colors.border, color: colors.text }]}
-                                placeholder={t('price')} // "TL" is currency, could be localized but Price placeholder is fine
+                                placeholder={t('price')}
                                 placeholderTextColor={colors.subText}
                                 keyboardType="numeric"
                                 value={price}
@@ -134,7 +134,7 @@ export default function CoffeeScreen() {
                         ]}>
                             <View style={styles.resultInfo}>
                                 <Text style={[styles.resultName, { color: colors.text }]}>{item.name} ({item.volume}ml)</Text>
-                                <Text style={[styles.resultPrice, { color: colors.subText }]}>{item.price} TL</Text>
+                                <Text style={[styles.resultPrice, { color: colors.subText }]}>{formatPrice(item.price)}</Text>
                             </View>
 
                             {item.isBest ? (

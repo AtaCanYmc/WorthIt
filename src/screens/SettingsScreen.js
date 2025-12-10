@@ -1,8 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View, Switch, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useApp } from '../context/AppContext';
-import { Globe, Moon, Sun } from 'lucide-react-native';
+import { useApp, APP_CURRENCIES } from '../context/AppContext';
+import { Globe, Moon, Sun, DollarSign } from 'lucide-react-native';
 
 const LANGUAGES = [
     { code: 'en', label: 'English' },
@@ -12,7 +12,7 @@ const LANGUAGES = [
 ];
 
 export default function SettingsScreen() {
-    const { theme, toggleTheme, locale, switchLanguage, t, colors } = useApp();
+    const { theme, toggleTheme, locale, switchLanguage, currency, switchCurrency, t, colors } = useApp();
     const isDark = theme === 'dark';
 
     return (
@@ -38,6 +38,37 @@ export default function SettingsScreen() {
                         />
                     </View>
                 </View>
+
+                {/* Currency Section */}
+                <Text style={[styles.sectionHeader, { color: colors.subText }]}>{t('currency')}</Text>
+                <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border, padding: 0 }]}>
+                    {APP_CURRENCIES.map((curr, index) => (
+                        <TouchableOpacity
+                            key={curr.code}
+                            style={[
+                                styles.langItem,
+                                { borderBottomColor: colors.border },
+                                index === APP_CURRENCIES.length - 1 && { borderBottomWidth: 0 }
+                            ]}
+                            onPress={() => switchCurrency(curr.code)}
+                        >
+                            <View style={styles.iconLabel}>
+                                <DollarSign color={curr.code === currency ? colors.primary : colors.subText} size={20} />
+                                <Text style={[
+                                    styles.langText,
+                                    { color: curr.code === currency ? colors.primary : colors.text },
+                                    curr.code === currency && { fontWeight: 'bold' }
+                                ]}>
+                                    {curr.label}
+                                </Text>
+                            </View>
+                            {curr.code === currency && (
+                                <View style={[styles.activeDot, { backgroundColor: colors.primary }]} />
+                            )}
+                        </TouchableOpacity>
+                    ))}
+                </View>
+
 
                 {/* Language Section */}
                 <Text style={[styles.sectionHeader, { color: colors.subText }]}>{t('language')}</Text>
@@ -89,6 +120,7 @@ const styles = StyleSheet.create({
     },
     content: {
         padding: 20,
+        paddingBottom: 50,
     },
     section: {
         borderRadius: 12,

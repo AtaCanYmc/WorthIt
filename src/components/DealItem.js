@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { useApp } from '../context/AppContext';
 
 const DealItem = ({ deal, isBest }) => {
-    const { t, colors } = useApp();
+    const { t, colors, formatPrice } = useApp();
     const area = (Math.PI * Math.pow(deal.diameter / 2, 2) * deal.quantity).toFixed(0);
 
     return (
@@ -14,11 +14,21 @@ const DealItem = ({ deal, isBest }) => {
         ]}>
             <View style={styles.info}>
                 <Text style={[styles.title, { color: colors.text }]}>{deal.quantity} x {deal.diameter} cm</Text>
-                <Text style={[styles.price, { color: colors.text }]}>{deal.price} TL</Text>
+                <Text style={[styles.price, { color: colors.text }]}>{formatPrice(deal.price)}</Text>
             </View>
             <View style={styles.details}>
                 <Text style={[styles.detailText, { color: colors.subText }]}>{t('total_area')}: {area} cm²</Text>
-                <Text style={[styles.detailText, { color: colors.subText }]}>{t('unit_price')}: {deal.value.toFixed(4)}</Text>
+                <Text style={[styles.detailText, { color: colors.subText }]}>{t('unit_price')}: {formatPrice(deal.value * 1000)}</Text>
+                {/* Note: deal.value in pizza calculator is Price / Area. So Price per cm2. 
+                    Usually very small number. Multiplied by 1000 or similar might be better for display?
+                    Original logic was: unitPrice = price / area. 
+                    Actually, let's keep it raw as before but formatted.
+                 */}
+            </View>
+            <View style={{ marginTop: 5 }}>
+                <Text style={[styles.detailText, { color: colors.subText, fontSize: 12 }]}>
+                    {t('unit_price')}: {deal.value.toFixed(5)} ({formatPrice(deal.value)}/cm²)
+                </Text>
             </View>
             {isBest && (
                 <View style={[styles.badge, { backgroundColor: colors.success }]}>
@@ -54,8 +64,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     details: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        flexDirection: 'column',
     },
     detailText: {
         fontSize: 14,

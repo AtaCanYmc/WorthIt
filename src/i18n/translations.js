@@ -39,6 +39,7 @@ export const translations = {
         theme: 'Theme',
         dark_mode: 'Dark Mode',
         advantage: 'ADVANTAGEOUS',
+        currency: 'Currency',
     },
     tr: {
         pizza: 'Pizza',
@@ -80,6 +81,7 @@ export const translations = {
         theme: 'Tema',
         dark_mode: 'Karanlık Mod',
         advantage: 'AVANTAJLI',
+        currency: 'Para Birimi',
     },
     de: {
         pizza: 'Pizza',
@@ -121,6 +123,7 @@ export const translations = {
         theme: 'Thema',
         dark_mode: 'Dunkelmodus',
         advantage: 'VORTEILHAFT',
+        currency: 'Währung',
     },
     fr: {
         pizza: 'Pizza',
@@ -162,5 +165,6 @@ export const translations = {
         theme: 'Thème',
         dark_mode: 'Mode Sombre',
         advantage: 'AVANTAGEUX',
+        currency: 'Devise',
     }
 };
