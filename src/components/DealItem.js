@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { useApp } from '../context/AppContext';
 
 const DealItem = ({ deal, isBest }) => {
-    const { t, colors, formatPrice } = useApp();
+    const { t, colors, formatPrice, getUnitLabel } = useApp();
     const area = (Math.PI * Math.pow(deal.diameter / 2, 2) * deal.quantity).toFixed(0);
 
     return (
@@ -13,23 +13,16 @@ const DealItem = ({ deal, isBest }) => {
             isBest && { borderColor: colors.success, backgroundColor: colors.successBg, borderWidth: 2 }
         ]}>
             <View style={styles.info}>
-                <Text style={[styles.title, { color: colors.text }]}>{deal.quantity} x {deal.diameter} cm</Text>
+                <Text style={[styles.title, { color: colors.text }]}>{deal.quantity} x {deal.diameter} {getUnitLabel('length')}</Text>
                 <Text style={[styles.price, { color: colors.text }]}>{formatPrice(deal.price)}</Text>
             </View>
             <View style={styles.details}>
-                <Text style={[styles.detailText, { color: colors.subText }]}>{t('total_area')}: {area} cm²</Text>
-                <Text style={[styles.detailText, { color: colors.subText }]}>{t('unit_price')}: {formatPrice(deal.value * 1000)}</Text>
-                {/* Note: deal.value in pizza calculator is Price / Area. So Price per cm2. 
-                    Usually very small number. Multiplied by 1000 or similar might be better for display?
-                    Original logic was: unitPrice = price / area. 
-                    Actually, let's keep it raw as before but formatted.
-                 */}
+                <Text style={[styles.detailText, { color: colors.subText }]}>{t('total_area')}: {area} {getUnitLabel('area')}</Text>
+
+                {/* Note: deal.value is Price / Area. We show rounded value. */}
+                <Text style={[styles.detailText, { color: colors.subText }]}>{t('unit_price')}: {deal.value.toFixed(5)} ({formatPrice(deal.value)}/{getUnitLabel('area')})</Text>
             </View>
-            <View style={{ marginTop: 5 }}>
-                <Text style={[styles.detailText, { color: colors.subText, fontSize: 12 }]}>
-                    {t('unit_price')}: {deal.value.toFixed(5)} ({formatPrice(deal.value)}/cm²)
-                </Text>
-            </View>
+
             {isBest && (
                 <View style={[styles.badge, { backgroundColor: colors.success }]}>
                     <Text style={styles.badgeText}>{t('best_deal')}</Text>

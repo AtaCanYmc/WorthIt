@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, Switch, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useApp, APP_CURRENCIES } from '../context/AppContext';
-import { Globe, Moon, Sun, DollarSign } from 'lucide-react-native';
+import { Globe, Moon, Sun, DollarSign, Ruler } from 'lucide-react-native';
 
 const LANGUAGES = [
     { code: 'en', label: 'English' },
@@ -11,8 +11,13 @@ const LANGUAGES = [
     { code: 'fr', label: 'Français' },
 ];
 
+const UNIT_SYSTEMS = [
+    { code: 'metric', labelKey: 'metric' },
+    { code: 'imperial', labelKey: 'imperial' },
+];
+
 export default function SettingsScreen() {
-    const { theme, toggleTheme, locale, switchLanguage, currency, switchCurrency, t, colors } = useApp();
+    const { theme, toggleTheme, locale, switchLanguage, currency, switchCurrency, unitSystem, switchUnitSystem, t, colors } = useApp();
     const isDark = theme === 'dark';
 
     return (
@@ -37,6 +42,36 @@ export default function SettingsScreen() {
                             thumbColor={isDark ? "#f4f3f4" : "#f4f3f4"}
                         />
                     </View>
+                </View>
+
+                {/* Units Section */}
+                <Text style={[styles.sectionHeader, { color: colors.subText }]}>{t('unit_system')}</Text>
+                <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border, padding: 0 }]}>
+                    {UNIT_SYSTEMS.map((system, index) => (
+                        <TouchableOpacity
+                            key={system.code}
+                            style={[
+                                styles.langItem,
+                                { borderBottomColor: colors.border },
+                                index === UNIT_SYSTEMS.length - 1 && { borderBottomWidth: 0 }
+                            ]}
+                            onPress={() => switchUnitSystem(system.code)}
+                        >
+                            <View style={styles.iconLabel}>
+                                <Ruler color={system.code === unitSystem ? colors.primary : colors.subText} size={20} />
+                                <Text style={[
+                                    styles.langText,
+                                    { color: system.code === unitSystem ? colors.primary : colors.text },
+                                    system.code === unitSystem && { fontWeight: 'bold' }
+                                ]}>
+                                    {t(system.labelKey)}
+                                </Text>
+                            </View>
+                            {system.code === unitSystem && (
+                                <View style={[styles.activeDot, { backgroundColor: colors.primary }]} />
+                            )}
+                        </TouchableOpacity>
+                    ))}
                 </View>
 
                 {/* Currency Section */}
@@ -68,7 +103,6 @@ export default function SettingsScreen() {
                         </TouchableOpacity>
                     ))}
                 </View>
-
 
                 {/* Language Section */}
                 <Text style={[styles.sectionHeader, { color: colors.subText }]}>{t('language')}</Text>

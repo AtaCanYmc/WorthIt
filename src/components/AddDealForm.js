@@ -6,7 +6,7 @@ const AddDealForm = ({ onAddDeal }) => {
     const [quantity, setQuantity] = useState('1');
     const [diameter, setDiameter] = useState('');
     const [price, setPrice] = useState('');
-    const { t, colors } = useApp();
+    const { t, colors, getUnitLabel, unitSystem } = useApp();
 
     const handleSubmit = () => {
         if (!quantity || !diameter || !price) return;
@@ -22,6 +22,9 @@ const AddDealForm = ({ onAddDeal }) => {
         setDiameter('');
         setPrice('');
     };
+
+    // Placeholder based on system
+    const diameterPlaceholder = unitSystem === 'metric' ? '30' : '12';
 
     return (
         <View style={[styles.container, { backgroundColor: colors.card, shadowColor: colors.text }]}>
@@ -39,13 +42,13 @@ const AddDealForm = ({ onAddDeal }) => {
                     />
                 </View>
                 <View style={styles.inputGroup}>
-                    <Text style={[styles.label, { color: colors.subText }]}>{t('diameter')}</Text>
+                    <Text style={[styles.label, { color: colors.subText }]}>{t('diameter')} ({getUnitLabel('length')})</Text>
                     <TextInput
                         style={[styles.input, { borderColor: colors.border, backgroundColor: colors.inputBg, color: colors.text }]}
                         value={diameter}
                         onChangeText={setDiameter}
                         keyboardType="numeric"
-                        placeholder="30"
+                        placeholder={diameterPlaceholder}
                         placeholderTextColor={colors.subText}
                     />
                 </View>

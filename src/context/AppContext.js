@@ -47,7 +47,8 @@ export const APP_CURRENCIES = [
 export const AppProvider = ({ children }) => {
     const [locale, setLocale] = useState('en');
     const [theme, setTheme] = useState('light');
-    const [currency, setCurrency] = useState('EUR'); // Default EUR
+    const [currency, setCurrency] = useState('EUR');
+    const [unitSystem, setUnitSystem] = useState('metric'); // 'metric' or 'imperial'
 
     // Load persistence
     useEffect(() => {
@@ -56,10 +57,12 @@ export const AppProvider = ({ children }) => {
                 const storedLocale = await AsyncStorage.getItem('app_locale');
                 const storedTheme = await AsyncStorage.getItem('app_theme');
                 const storedCurrency = await AsyncStorage.getItem('app_currency');
+                const storedUnitSystem = await AsyncStorage.getItem('app_unit_system');
 
                 if (storedLocale) setLocale(storedLocale);
                 if (storedTheme) setTheme(storedTheme);
                 if (storedCurrency) setCurrency(storedCurrency);
+                if (storedUnitSystem) setUnitSystem(storedUnitSystem);
             } catch (e) {
                 console.error("Failed to load settings", e);
             }
@@ -100,6 +103,11 @@ export const AppProvider = ({ children }) => {
         saveSetting('app_currency', curr);
     };
 
+    const switchUnitSystem = (system) => {
+        setUnitSystem(system);
+        saveSetting('app_unit_system', system);
+    };
+
     const formatPrice = (amount) => {
         if (typeof amount !== 'number') return amount;
 
@@ -109,10 +117,26 @@ export const AppProvider = ({ children }) => {
                 currency: currency,
             }).format(amount);
         } catch (error) {
-            // Fallback if Intl is not fully supported or error occurs
             const symbol = APP_CURRENCIES.find(c => c.code === currency)?.symbol || currency;
             return `${symbol} ${amount.toFixed(2)}`;
         }
+    };
+
+    // Helper to get labels based on unit system
+    const getUnitLabel = (type) => {
+        // type: 'length', 'volume', 'weight'
+        if (unitSystem === 'metric') {
+            if (type === 'length') return 'cm';
+            if (type === 'area') return 'cm²';
+            if (type === 'volume') return 'ml';
+            if (type === 'weight') return 'g';
+        } else {
+            if (type === 'length') return 'in'; // or inch
+            if (type === 'area') return 'in²';
+            if (type === 'volume') return 'fl oz';
+            if (type === 'weight') return 'oz';
+        }
+        return '';
     };
 
     const colors = themeColors[theme];
@@ -122,12 +146,15 @@ export const AppProvider = ({ children }) => {
             locale,
             theme,
             currency,
+            unitSystem, // Export state
             colors,
             t,
             formatPrice,
             toggleTheme,
             switchLanguage,
-            switchCurrency
+            switchCurrency,
+            switchUnitSystem, // Export switcher
+            getUnitLabel // Export helper
         }}>
             {children}
         </AppContext.Provider>

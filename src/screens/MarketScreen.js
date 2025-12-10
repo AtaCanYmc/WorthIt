@@ -9,7 +9,8 @@ export default function MarketScreen() {
     const [prodA, setProdA] = useState({ price: '', quantity: '' });
     const [prodB, setProdB] = useState({ price: '', quantity: '' });
     const [result, setResult] = useState(null);
-    const { t, colors, formatPrice, locale } = useApp();
+    const { t, colors, formatPrice, getUnitLabel } = useApp();
+    const unitLabel = getUnitLabel('weight');
 
     const handleCompare = () => {
         const a = { price: parseFloat(prodA.price), quantity: parseFloat(prodA.quantity) };
@@ -79,7 +80,7 @@ export default function MarketScreen() {
                             />
                             <TextInput
                                 style={[styles.input, { backgroundColor: colors.inputBg, borderColor: colors.border, color: colors.text }]}
-                                placeholder={t('quantity')}
+                                placeholder={`${t('quantity')} (${unitLabel})`}
                                 placeholderTextColor={colors.subText}
                                 keyboardType="numeric"
                                 value={prodA.quantity}
@@ -87,7 +88,7 @@ export default function MarketScreen() {
                             />
                             {result && (
                                 <Text style={[styles.unitPrice, { color: colors.subText }]}>
-                                    {formatPrice(result.unitPriceA)}/{t('per_unit')}
+                                    {formatPrice(result.unitPriceA)}/{unitLabel}
                                 </Text>
                             )}
                         </View>
@@ -112,7 +113,7 @@ export default function MarketScreen() {
                             />
                             <TextInput
                                 style={[styles.input, { backgroundColor: colors.inputBg, borderColor: colors.border, color: colors.text }]}
-                                placeholder={t('quantity')}
+                                placeholder={`${t('quantity')} (${unitLabel})`}
                                 placeholderTextColor={colors.subText}
                                 keyboardType="numeric"
                                 value={prodB.quantity}
@@ -120,7 +121,7 @@ export default function MarketScreen() {
                             />
                             {result && (
                                 <Text style={[styles.unitPrice, { color: colors.subText }]}>
-                                    {formatPrice(result.unitPriceB)}/{t('per_unit')}
+                                    {formatPrice(result.unitPriceB)}/{unitLabel}
                                 </Text>
                             )}
                         </View>

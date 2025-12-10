@@ -1,9 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COFFEE_SIZES, calculateCoffeeValue } from '../utils/CoffeeCalculator';
+import { calculateCoffeeValue } from '../utils/CoffeeCalculator';
 import { Plus, Trash2, Coffee } from 'lucide-react-native';
 import { useApp } from '../context/AppContext';
+
+// We'll define dynamic presets inside the component based on unit system
+const METRIC_PRESETS = [
+    { id: 'tall', label: 'Tall (Small)', volume: 354 },
+    { id: 'grande', label: 'Grande (Medium)', volume: 473 },
+    { id: 'venti', label: 'Venti (Large)', volume: 591 },
+];
+
+const IMPERIAL_PRESETS = [
+    { id: 'tall', label: 'Tall (Small)', volume: 12 },
+    { id: 'grande', label: 'Grande (Medium)', volume: 16 },
+    { id: 'venti', label: 'Venti (Large)', volume: 20 },
+];
 
 export default function CoffeeScreen() {
     const [items, setItems] = useState([]);
@@ -11,7 +24,17 @@ export default function CoffeeScreen() {
     const [volume, setVolume] = useState('');
     const [name, setName] = useState('');
     const [selectedPreset, setSelectedPreset] = useState(null);
-    const { t, colors, formatPrice } = useApp();
+    const { t, colors, formatPrice, unitSystem, getUnitLabel } = useApp();
+
+    const PRESETS = unitSystem === 'metric' ? METRIC_PRESETS : IMPERIAL_PRESETS;
+    const unitLabel = getUnitLabel('volume');
+
+    // Clear list if unit system changes to avoid confusion? 
+    // Or just let user manage it. Let's keep it simple. User might want to compare mixed units but our math assumes consistency.
+    // Ideally we should clear items when unit system changes.
+    useEffect(() => {
+        setItems([]);
+    }, [unitSystem]);
 
     const handleSelectPreset = (size) => {
         setSelectedPreset(size.id);
@@ -61,7 +84,7 @@ export default function CoffeeScreen() {
                     <View style={styles.presetsContainer}>
                         <Text style={[styles.sectionTitle, { color: colors.subText }]}>{t('quick_select')}</Text>
                         <View style={styles.presetsRow}>
-                            {COFFEE_SIZES.map((size) => (
+                            {PRESETS.map((size) => (
                                 <TouchableOpacity
                                     key={size.id}
                                     style={[
@@ -83,7 +106,7 @@ export default function CoffeeScreen() {
                                         { color: colors.subText },
                                         selectedPreset === size.id && { color: '#efefef' }
                                     ]}>
-                                        {size.volume}ml
+                                        {size.volume}{unitLabel}
                                     </Text>
                                 </TouchableOpacity>
                             ))}
@@ -102,7 +125,7 @@ export default function CoffeeScreen() {
                             />
                             <TextInput
                                 style={[styles.input, { flex: 1, backgroundColor: colors.inputBg, borderColor: colors.border, color: colors.text }]}
-                                placeholder="ml"
+                                placeholder={unitLabel}
                                 placeholderTextColor={colors.subText}
                                 keyboardType="numeric"
                                 value={volume}
@@ -133,7 +156,7 @@ export default function CoffeeScreen() {
                             item.isBest && { borderColor: colors.success, backgroundColor: colors.successBg }
                         ]}>
                             <View style={styles.resultInfo}>
-                                <Text style={[styles.resultName, { color: colors.text }]}>{item.name} ({item.volume}ml)</Text>
+                                <Text style={[styles.resultName, { color: colors.text }]}>{item.name} ({item.volume}{unitLabel})</Text>
                                 <Text style={[styles.resultPrice, { color: colors.subText }]}>{formatPrice(item.price)}</Text>
                             </View>
 
