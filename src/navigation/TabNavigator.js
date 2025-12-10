@@ -23,7 +23,7 @@ export default function TabNavigator() {
                     borderTopColor: colors.border,
                     paddingBottom: 5,
                     paddingTop: 5,
-                    height: 60,
+                    height: 80,
                 },
                 tabBarLabelStyle: {
                     fontSize: 12,
