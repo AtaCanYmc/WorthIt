@@ -1,19 +1,21 @@
 
-export const calculatePizzaArea = (diameter) => {
-    const radius = diameter / 2;
-    return Math.PI * Math.pow(radius, 2);
-};
+export const calculatePizzaValue = (deals) => {
+    if (!deals || deals.length === 0) return [];
 
-export const calculateDealValue = (quantity, diameter, price) => {
-    const totalArea = quantity * calculatePizzaArea(diameter);
-    if (totalArea === 0) return 0;
-    // Price per square unit (lower is better)
-    return price / totalArea;
-};
+    // Calculate Area and Unit Price (Value) for each
+    const processed = deals.map(deal => {
+        const radius = deal.diameter / 2;
+        const area = Math.PI * Math.pow(radius, 2) * deal.quantity;
+        const value = deal.price / area; // Price per unit area (Lower is better)
+        return { ...deal, area, value };
+    });
 
-export const compareDeals = (deals) => {
-    return deals.map(deal => {
-        const value = calculateDealValue(deal.quantity, deal.diameter, deal.price);
-        return { ...deal, value };
-    }).sort((a, b) => a.value - b.value);
+    // Find best deal (lowest value)
+    const bestDeal = processed.reduce((min, p) => p.value < min.value ? p : min, processed[0]);
+
+    return processed.map(p => ({
+        ...p,
+        isBest: p.id === bestDeal.id,
+        savings: p.id === bestDeal.id ? 0 : ((p.value - bestDeal.value) / bestDeal.value * 100).toFixed(0)
+    }));
 };

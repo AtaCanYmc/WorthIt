@@ -3,21 +3,33 @@ import { StyleSheet, Text, View, FlatList, KeyboardAvoidingView, Platform, Statu
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AddDealForm from '../components/AddDealForm';
 import DealItem from '../components/DealItem';
-import { compareDeals } from '../utils/PizzaCalculator';
+import { Plus, Trash2, Pizza } from 'lucide-react-native';
 import { useApp } from '../context/AppContext';
+import { calculatePizzaValue } from '../utils/PizzaCalculator';
 
 export default function PizzaScreen() {
     const [deals, setDeals] = useState([]);
     const { t, colors, theme } = useApp();
 
-    const handleAddDeal = (newDeal) => {
-        const updatedDeals = [...deals, newDeal];
-        const sortedDeals = compareDeals(updatedDeals);
-        setDeals(sortedDeals);
+    const handleAddDeal = (deal) => {
+        const newDeal = {
+            id: deal.id,
+            quantity: deal.quantity,
+            diameter: deal.diameter,
+            price: deal.price
+        };
+
+        const newDeals = [...deals, newDeal];
+        setDeals(calculatePizzaValue(newDeals));
     };
 
     const handleClear = () => {
         setDeals([]);
+    };
+
+    const removeDeal = (id) => {
+        const newDeals = deals.filter(d => d.id !== id);
+        setDeals(calculatePizzaValue(newDeals));
     };
 
     return (
@@ -45,7 +57,7 @@ export default function PizzaScreen() {
                         data={deals}
                         keyExtractor={item => item.id}
                         renderItem={({ item, index }) => (
-                            <DealItem deal={item} isBest={index === 0} />
+                            <DealItem deal={item} isBest={index === 0} onRemove={removeDeal} />
                         )}
                         contentContainerStyle={styles.listContent}
                         ListEmptyComponent={

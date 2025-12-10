@@ -10,27 +10,26 @@ export const calculateCoffeeValue = (items) => {
     // Calculate unit price (Price per mL)
     const itemsWithUnitPrice = items.map(item => ({
         ...item,
-        unitPrice: item.price / item.volume
+        unitPrice: item.price / item.volume,
+        value: item.price / item.volume // Alias for consistency
     }));
 
     // Find best (lowest) unit price
     const minUnitPrice = Math.min(...itemsWithUnitPrice.map(i => i.unitPrice));
-    const maxUnitPrice = Math.max(...itemsWithUnitPrice.map(i => i.unitPrice));
 
     return itemsWithUnitPrice.map(item => {
-        // Calculate savings compared to the most expensive option
-        // If this IS the most expensive, savings is 0.
-        // If max === min (all same value), savings 0.
+        // Calculate markup compared to the best option
+        // ((Current - Best) / Best) * 100
 
         let savings = 0;
-        if (maxUnitPrice > minUnitPrice) {
-            savings = ((maxUnitPrice - item.unitPrice) / maxUnitPrice) * 100;
+        if (minUnitPrice > 0) {
+            savings = ((item.unitPrice - minUnitPrice) / minUnitPrice) * 100;
         }
 
         return {
             ...item,
             isBest: item.unitPrice === minUnitPrice,
-            savings: savings.toFixed(1) // Percentage string
+            savings: savings.toFixed(1) // Percentage string (e.g., "50.0" means 50% more expensive)
         };
     });
 };
