@@ -3,18 +3,24 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import PizzaScreen from '../screens/PizzaScreen';
 import CoffeeScreen from '../screens/CoffeeScreen';
 import MarketScreen from '../screens/MarketScreen';
-import { Pizza, Coffee, ShoppingCart } from 'lucide-react-native';
+import SettingsScreen from '../screens/SettingsScreen';
+import { Pizza, Coffee, ShoppingCart, Settings } from 'lucide-react-native';
+import { useApp } from '../context/AppContext';
 
 const Tab = createBottomTabNavigator();
 
 export default function TabNavigator() {
+    const { t, colors } = useApp();
+
     return (
         <Tab.Navigator
             screenOptions={{
                 headerShown: false,
-                tabBarActiveTintColor: '#FF5722',
-                tabBarInactiveTintColor: 'gray',
+                tabBarActiveTintColor: colors.primary,
+                tabBarInactiveTintColor: colors.subText,
                 tabBarStyle: {
+                    backgroundColor: colors.tabBar,
+                    borderTopColor: colors.border,
                     paddingBottom: 5,
                     paddingTop: 5,
                     height: 60,
@@ -29,17 +35,17 @@ export default function TabNavigator() {
                 name="Pizza"
                 component={PizzaScreen}
                 options={{
-                    tabBarLabel: 'Pizza',
+                    tabBarLabel: t('pizza'),
                     tabBarIcon: ({ color, size }) => (
                         <Pizza color={color} size={size} />
                     ),
                 }}
             />
             <Tab.Screen
-                name="Kahve"
+                name="Coffee"
                 component={CoffeeScreen}
                 options={{
-                    tabBarLabel: 'Kahve',
+                    tabBarLabel: t('coffee'),
                     tabBarIcon: ({ color, size }) => (
                         <Coffee color={color} size={size} />
                     ),
@@ -49,9 +55,19 @@ export default function TabNavigator() {
                 name="Market"
                 component={MarketScreen}
                 options={{
-                    tabBarLabel: 'Market',
+                    tabBarLabel: t('market'),
                     tabBarIcon: ({ color, size }) => (
                         <ShoppingCart color={color} size={size} />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="Settings"
+                component={SettingsScreen}
+                options={{
+                    tabBarLabel: t('settings'),
+                    tabBarIcon: ({ color, size }) => (
+                        <Settings color={color} size={size} />
                     ),
                 }}
             />

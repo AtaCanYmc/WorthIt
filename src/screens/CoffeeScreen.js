@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, Alert,
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COFFEE_SIZES, calculateCoffeeValue } from '../utils/CoffeeCalculator';
 import { Plus, Trash2, Coffee } from 'lucide-react-native';
+import { useApp } from '../context/AppContext';
 
 export default function CoffeeScreen() {
     const [items, setItems] = useState([]);
@@ -10,16 +11,17 @@ export default function CoffeeScreen() {
     const [volume, setVolume] = useState('');
     const [name, setName] = useState('');
     const [selectedPreset, setSelectedPreset] = useState(null);
+    const { t, colors } = useApp();
 
     const handleSelectPreset = (size) => {
         setSelectedPreset(size.id);
-        setName(size.label.split(' ')[0]); // Just "Tall", "Grande" etc
+        setName(size.label.split(' ')[0]);
         setVolume(size.volume.toString());
     };
 
     const handleAddItem = () => {
         if (!price || !volume || !name) {
-            Alert.alert('Eksik Bilgi', 'Lütfen tüm alanları doldurun.');
+            Alert.alert(t('missing_info'), t('fill_all_fields'));
             return;
         }
 
@@ -33,7 +35,6 @@ export default function CoffeeScreen() {
         const newItems = [...items, newItem];
         setItems(calculateCoffeeValue(newItems));
 
-        // Reset form
         setPrice('');
         setVolume('');
         setName('');
@@ -46,30 +47,42 @@ export default function CoffeeScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+        <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'left', 'right']}>
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={{ flex: 1 }}
             >
-                <View style={styles.header}>
-                    <Text style={styles.headerTitle}>☕ Kahve Kıyasla</Text>
+                <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
+                    <Text style={[styles.headerTitle, { color: colors.coffeeTitle }]}>{t('coffee_compare')}</Text>
                 </View>
 
                 <ScrollView contentContainerStyle={styles.scrollContent}>
                     {/* Presets */}
                     <View style={styles.presetsContainer}>
-                        <Text style={styles.sectionTitle}>Hızlı Seçim:</Text>
+                        <Text style={[styles.sectionTitle, { color: colors.subText }]}>{t('quick_select')}</Text>
                         <View style={styles.presetsRow}>
                             {COFFEE_SIZES.map((size) => (
                                 <TouchableOpacity
                                     key={size.id}
-                                    style={[styles.presetBtn, selectedPreset === size.id && styles.presetBtnActive]}
+                                    style={[
+                                        styles.presetBtn,
+                                        { backgroundColor: colors.card, borderColor: colors.border },
+                                        selectedPreset === size.id && { backgroundColor: colors.coffeeTitle, borderColor: colors.coffeeTitle }
+                                    ]}
                                     onPress={() => handleSelectPreset(size)}
                                 >
-                                    <Text style={[styles.presetText, selectedPreset === size.id && styles.presetTextActive]}>
+                                    <Text style={[
+                                        styles.presetText,
+                                        { color: colors.subText },
+                                        selectedPreset === size.id && { color: '#fff' }
+                                    ]}>
                                         {size.label.split(' ')[0]}
                                     </Text>
-                                    <Text style={[styles.presetSubText, selectedPreset === size.id && styles.presetTextActive]}>
+                                    <Text style={[
+                                        styles.presetSubText,
+                                        { color: colors.subText },
+                                        selectedPreset === size.id && { color: '#efefef' }
+                                    ]}>
                                         {size.volume}ml
                                     </Text>
                                 </TouchableOpacity>
@@ -78,65 +91,74 @@ export default function CoffeeScreen() {
                     </View>
 
                     {/* Input Form */}
-                    <View style={styles.inputCard}>
+                    <View style={[styles.inputCard, { backgroundColor: colors.card, shadowColor: colors.text }]}>
                         <View style={styles.inputRow}>
                             <TextInput
-                                style={[styles.input, { flex: 2 }]}
-                                placeholder="İsim (Örn: XL)"
+                                style={[styles.input, { flex: 2, backgroundColor: colors.inputBg, borderColor: colors.border, color: colors.text }]}
+                                placeholder={t('name_placeholder')}
+                                placeholderTextColor={colors.subText}
                                 value={name}
                                 onChangeText={setName}
                             />
                             <TextInput
-                                style={[styles.input, { flex: 1 }]}
+                                style={[styles.input, { flex: 1, backgroundColor: colors.inputBg, borderColor: colors.border, color: colors.text }]}
                                 placeholder="ml"
+                                placeholderTextColor={colors.subText}
                                 keyboardType="numeric"
                                 value={volume}
                                 onChangeText={setVolume}
                             />
                             <TextInput
-                                style={[styles.input, { flex: 1 }]}
-                                placeholder="TL"
+                                style={[styles.input, { flex: 1, backgroundColor: colors.inputBg, borderColor: colors.border, color: colors.text }]}
+                                placeholder={t('price')} // "TL" is currency, could be localized but Price placeholder is fine
+                                placeholderTextColor={colors.subText}
                                 keyboardType="numeric"
                                 value={price}
                                 onChangeText={setPrice}
                             />
                         </View>
-                        <TouchableOpacity style={styles.addButton} onPress={handleAddItem}>
+                        <TouchableOpacity style={[styles.addButton, { backgroundColor: colors.coffeeTitle }]} onPress={handleAddItem}>
                             <Plus color="white" size={24} />
-                            <Text style={styles.addButtonText}>Ekle</Text>
+                            <Text style={styles.addButtonText}>{t('add')}</Text>
                         </TouchableOpacity>
                     </View>
 
                     {/* List */}
-                    <Text style={[styles.sectionTitle, { marginTop: 20 }]}>Sonuçlar:</Text>
+                    <Text style={[styles.sectionTitle, { marginTop: 20, color: colors.subText }]}>{t('results')}</Text>
 
                     {items.map((item) => (
-                        <View key={item.id} style={[styles.resultCard, item.isBest && styles.bestResultCard]}>
+                        <View key={item.id} style={[
+                            styles.resultCard,
+                            { backgroundColor: colors.card, borderColor: colors.border },
+                            item.isBest && { borderColor: colors.success, backgroundColor: colors.successBg }
+                        ]}>
                             <View style={styles.resultInfo}>
-                                <Text style={styles.resultName}>{item.name} ({item.volume}ml)</Text>
-                                <Text style={styles.resultPrice}>{item.price} TL</Text>
+                                <Text style={[styles.resultName, { color: colors.text }]}>{item.name} ({item.volume}ml)</Text>
+                                <Text style={[styles.resultPrice, { color: colors.subText }]}>{item.price} TL</Text>
                             </View>
 
                             {item.isBest ? (
-                                <View style={styles.badgeContainer}>
-                                    <Text style={styles.badgeText}>En Avantajlı</Text>
+                                <View style={[styles.badgeContainer, { backgroundColor: colors.success }]}>
+                                    <Text style={styles.badgeText}>{t('best_value')}</Text>
                                 </View>
                             ) : (
                                 <View style={styles.savingsContainer}>
-                                    {parseFloat(item.savings) > 0 && <Text style={styles.savingsText}>%{item.savings} daha pahalı</Text>}
+                                    {parseFloat(item.savings) > 0 && <Text style={[styles.savingsText, { color: colors.error }]}>
+                                        {t('more_expensive', { percent: item.savings })}
+                                    </Text>}
                                 </View>
                             )}
 
                             <TouchableOpacity onPress={() => handleRemoveItem(item.id)} style={styles.deleteBtn}>
-                                <Trash2 size={20} color="#999" />
+                                <Trash2 size={20} color={colors.subText} />
                             </TouchableOpacity>
                         </View>
                     ))}
 
                     {items.length === 0 && (
                         <View style={styles.emptyState}>
-                            <Coffee size={48} color="#ddd" />
-                            <Text style={styles.emptyText}>Kahve fiyatlarını girin, kıyaslayalım.</Text>
+                            <Coffee size={48} color={colors.border} />
+                            <Text style={[styles.emptyText, { color: colors.subText }]}>{t('empty_list_coffee')}</Text>
                         </View>
                     )}
 
@@ -149,19 +171,15 @@ export default function CoffeeScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f8f9fa',
     },
     header: {
         padding: 20,
-        backgroundColor: '#fff',
         alignItems: 'center',
         borderBottomWidth: 1,
-        borderBottomColor: '#eee',
     },
     headerTitle: {
         fontSize: 22,
         fontWeight: 'bold',
-        color: '#795548', // Coffee color
     },
     scrollContent: {
         padding: 20,
@@ -170,7 +188,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
         marginBottom: 10,
-        color: '#555',
     },
     presetsRow: {
         flexDirection: 'row',
@@ -181,32 +198,19 @@ const styles = StyleSheet.create({
         flex: 1,
         marginHorizontal: 5,
         padding: 10,
-        backgroundColor: '#fff',
         borderRadius: 8,
         borderWidth: 1,
-        borderColor: '#ddd',
         alignItems: 'center',
-    },
-    presetBtnActive: {
-        backgroundColor: '#795548',
-        borderColor: '#795548',
     },
     presetText: {
         fontWeight: 'bold',
-        color: '#555',
     },
     presetSubText: {
         fontSize: 12,
-        color: '#888',
-    },
-    presetTextActive: {
-        color: '#fff',
     },
     inputCard: {
-        backgroundColor: '#fff',
         padding: 15,
         borderRadius: 12,
-        shadowColor: '#000',
         shadowOpacity: 0.05,
         shadowRadius: 5,
         elevation: 2,
@@ -218,13 +222,10 @@ const styles = StyleSheet.create({
     },
     input: {
         borderWidth: 1,
-        borderColor: '#eee',
         borderRadius: 8,
         padding: 10,
-        backgroundColor: '#f9f9f9',
     },
     addButton: {
-        backgroundColor: '#795548',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
@@ -240,16 +241,10 @@ const styles = StyleSheet.create({
     resultCard: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#fff',
         padding: 15,
         marginBottom: 10,
         borderRadius: 10,
         borderWidth: 1,
-        borderColor: '#eee',
-    },
-    bestResultCard: {
-        borderColor: '#4CAF50',
-        backgroundColor: '#E8F5E9',
     },
     resultInfo: {
         flex: 1,
@@ -257,14 +252,11 @@ const styles = StyleSheet.create({
     resultName: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#333',
     },
     resultPrice: {
         fontSize: 14,
-        color: '#666',
     },
     badgeContainer: {
-        backgroundColor: '#4CAF50',
         paddingHorizontal: 8,
         paddingVertical: 4,
         borderRadius: 4,
@@ -279,7 +271,6 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     savingsText: {
-        color: '#d32f2f',
         fontSize: 12,
     },
     deleteBtn: {
@@ -291,6 +282,5 @@ const styles = StyleSheet.create({
         gap: 10,
     },
     emptyText: {
-        color: '#999',
     }
 });

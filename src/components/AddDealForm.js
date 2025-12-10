@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, TextInput, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { useApp } from '../context/AppContext';
 
 const AddDealForm = ({ onAddDeal }) => {
     const [quantity, setQuantity] = useState('1');
     const [diameter, setDiameter] = useState('');
     const [price, setPrice] = useState('');
+    const { t, colors } = useApp();
 
     const handleSubmit = () => {
         if (!quantity || !diameter || !price) return;
@@ -16,49 +18,51 @@ const AddDealForm = ({ onAddDeal }) => {
             id: Date.now().toString(),
         });
 
-        // Reset form (keep quantity as 1 usually)
         setQuantity('1');
         setDiameter('');
         setPrice('');
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.header}>Yeni Pizza Ekle</Text>
+        <View style={[styles.container, { backgroundColor: colors.card, shadowColor: colors.text }]}>
+            <Text style={[styles.header, { color: colors.text }]}>{t('add_deal')}</Text>
             <View style={styles.row}>
                 <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Adet</Text>
+                    <Text style={[styles.label, { color: colors.subText }]}>{t('quantity')}</Text>
                     <TextInput
-                        style={styles.input}
+                        style={[styles.input, { borderColor: colors.border, backgroundColor: colors.inputBg, color: colors.text }]}
                         value={quantity}
                         onChangeText={setQuantity}
                         keyboardType="numeric"
                         placeholder="1"
+                        placeholderTextColor={colors.subText}
                     />
                 </View>
                 <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Çap (cm)</Text>
+                    <Text style={[styles.label, { color: colors.subText }]}>{t('diameter')}</Text>
                     <TextInput
-                        style={styles.input}
+                        style={[styles.input, { borderColor: colors.border, backgroundColor: colors.inputBg, color: colors.text }]}
                         value={diameter}
                         onChangeText={setDiameter}
                         keyboardType="numeric"
                         placeholder="30"
+                        placeholderTextColor={colors.subText}
                     />
                 </View>
                 <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Fiyat</Text>
+                    <Text style={[styles.label, { color: colors.subText }]}>{t('price')}</Text>
                     <TextInput
-                        style={styles.input}
+                        style={[styles.input, { borderColor: colors.border, backgroundColor: colors.inputBg, color: colors.text }]}
                         value={price}
                         onChangeText={setPrice}
                         keyboardType="numeric"
                         placeholder="200"
+                        placeholderTextColor={colors.subText}
                     />
                 </View>
             </View>
-            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                <Text style={styles.buttonText}>Listeye Ekle</Text>
+            <TouchableOpacity style={[styles.button, { backgroundColor: colors.primary }]} onPress={handleSubmit}>
+                <Text style={styles.buttonText}>{t('add_to_list')}</Text>
             </TouchableOpacity>
         </View>
     );
@@ -66,11 +70,9 @@ const AddDealForm = ({ onAddDeal }) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#fff',
         padding: 20,
         borderRadius: 15,
         marginBottom: 20,
-        shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
@@ -80,7 +82,6 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 15,
-        color: '#333',
         textAlign: 'center',
     },
     row: {
@@ -94,21 +95,17 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: 12,
-        color: '#666',
         marginBottom: 5,
         textAlign: 'center',
     },
     input: {
         borderWidth: 1,
-        borderColor: '#ddd',
         borderRadius: 8,
         padding: 10,
         fontSize: 16,
         textAlign: 'center',
-        backgroundColor: '#f9f9f9',
     },
     button: {
-        backgroundColor: '#FF5722',
         padding: 15,
         borderRadius: 10,
         alignItems: 'center',

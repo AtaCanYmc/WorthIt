@@ -4,9 +4,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AddDealForm from '../components/AddDealForm';
 import DealItem from '../components/DealItem';
 import { compareDeals } from '../utils/PizzaCalculator';
+import { useApp } from '../context/AppContext';
 
 export default function PizzaScreen() {
     const [deals, setDeals] = useState([]);
+    const { t, colors, theme } = useApp();
 
     const handleAddDeal = (newDeal) => {
         const updatedDeals = [...deals, newDeal];
@@ -19,23 +21,23 @@ export default function PizzaScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-            <StatusBar barStyle="dark-content" />
+        <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'left', 'right']}>
+            <StatusBar barStyle={theme === 'dark' ? 'light-content' : 'dark-content'} />
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={styles.keyboardView}
             >
-                <View style={styles.header}>
-                    <Text style={styles.headerTitle}>🍕 Pizza Hesaplayıcı</Text>
+                <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
+                    <Text style={[styles.headerTitle, { color: colors.primary }]}>{t('pizza_calculator')}</Text>
                 </View>
 
                 <View style={styles.content}>
                     <AddDealForm onAddDeal={handleAddDeal} />
 
                     <View style={styles.listHeader}>
-                        <Text style={styles.listTitle}>Karşılaştırma Listesi</Text>
+                        <Text style={[styles.listTitle, { color: colors.text }]}>{t('compare_list')}</Text>
                         {deals.length > 0 && (
-                            <Text style={styles.clearButton} onPress={handleClear}>Temizle</Text>
+                            <Text style={[styles.clearButton, { color: colors.primary }]} onPress={handleClear}>{t('clear')}</Text>
                         )}
                     </View>
 
@@ -47,7 +49,7 @@ export default function PizzaScreen() {
                         )}
                         contentContainerStyle={styles.listContent}
                         ListEmptyComponent={
-                            <Text style={styles.emptyText}>Henüz pizza eklenmedi.</Text>
+                            <Text style={[styles.emptyText, { color: colors.subText }]}>{t('empty_list_pizza')}</Text>
                         }
                     />
                 </View>
@@ -59,22 +61,18 @@ export default function PizzaScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
     },
     keyboardView: {
         flex: 1,
     },
     header: {
         padding: 20,
-        backgroundColor: '#fff',
         alignItems: 'center',
         borderBottomWidth: 1,
-        borderBottomColor: '#eee',
     },
     headerTitle: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#FF5722',
     },
     content: {
         flex: 1,
@@ -90,10 +88,8 @@ const styles = StyleSheet.create({
     listTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#333',
     },
     clearButton: {
-        color: '#FF5722',
         fontWeight: 'bold',
     },
     listContent: {
@@ -101,7 +97,6 @@ const styles = StyleSheet.create({
     },
     emptyText: {
         textAlign: 'center',
-        color: '#999',
         marginTop: 20,
         fontStyle: 'italic',
     },
