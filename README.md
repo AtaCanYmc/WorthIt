@@ -10,7 +10,9 @@ The application is built with **React Native (Expo)** and uses a modular archite
 *   **Pizza Module** (`src/screens/PizzaScreen.js`, `src/utils/PizzaCalculator.js`): Calculates pizza area based on diameter and quantity to find the best value per unit area. Supports Metric (cm) and Imperial (inch).
 *   **Coffee Module** (`src/screens/CoffeeScreen.js`, `src/utils/CoffeeCalculator.js`): Compares coffee sizes based on volume. Standardizes dynamic presets (e.g., Tall, Grande) based on the selected unit system.
 *   **Market Module** (`src/screens/MarketScreen.js`, `src/utils/MarketCalculator.js`): A generic unit price calculator for comparing any two products by weight or quantity.
-*   **Settings Module** (`src/screens/SettingsScreen.js`): Manages global preferences including Language, Theme, Currency, and Unit System.
+*   **Settings Module** (`src/screens/SettingsScreen.js`): Manages global preferences and navigates to the 'About & Legal' section.
+*   **History Module** (`src/screens/HistoryScreen.js`, `src/services/HistoryService.js`): Tracks and persists the last 50 calculations.
+*   **About Module** (`src/screens/AboutScreen.js`): Displays app version, copyright, and legal links.
 
 ### State Management
 The project uses **React Context API** (`src/context/AppContext.js`) for global state management.
@@ -84,6 +86,6 @@ The project uses **Jest** and **React Native Testing Library** for comprehensive
 ```bash
 npm test
 ```
-*   **Unit Tests**: Located in `src/utils/__tests__/` (Math logic).
+*   **Unit Tests**: Located in `src/utils/__tests__/` (Math logic) and `src/services/__tests__/` (History logic).
 *   **Component Tests**: Located in `src/screens/__tests__/` (UI interactions).
 *   **Integration Tests**: Located in `src/context/__tests__/` (Persistence).

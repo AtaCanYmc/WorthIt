@@ -13,6 +13,7 @@ Stop overpaying! Instantly find the best value for Pizzas, Coffee sizes, and Sup
 *   **🍕 Pizza Saver**: Don't be fooled by sizes! Compare 2 smaller pizzas vs. 1 large one instantly based on diameter and price. Supports both **cm** and **Inches**.
 *   **☕ Coffee Value**: Tall, Grande, or Venti? Find out which size gives you the most caffeine for your cash. Auto-adjusts to **ml** or **fl oz**.
 *   **🛒 Market Genius**: Compare any two products (e.g., 500g pack vs. 1kg pack) to see the true unit price and catch hidden price hikes.
+*   **📜 Smart History**: Automatically saves your last 50 calculations. Never lose a deal comparison again!
 *   **🌍 Truly Global**:
     *   **Multi-Language**: Fully localized in English, Turkish, German, and French.
     *   **Multi-Currency**: Works with USD ($), EUR (€), TRY (₺), and GBP (£).
