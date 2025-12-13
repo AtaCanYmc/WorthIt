@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import PizzaScreen from '../screens/PizzaScreen';
 import CoffeeScreen from '../screens/CoffeeScreen';
 import MarketScreen from '../screens/MarketScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import SettingsStack from './SettingsStack';
 import { Pizza, Coffee, ShoppingCart, Settings } from 'lucide-react-native';
 import { useApp } from '../context/AppContext';
 
@@ -62,8 +62,8 @@ export default function TabNavigator() {
                 }}
             />
             <Tab.Screen
-                name="Settings"
-                component={SettingsScreen}
+                name="SettingsTab"
+                component={SettingsStack}
                 options={{
                     tabBarLabel: t('settings'),
                     tabBarIcon: ({ color, size }) => (

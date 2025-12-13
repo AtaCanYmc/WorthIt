@@ -137,6 +137,11 @@ export const translations = {
         unit_system: 'Maßeinheit',
         metric: 'Metrisch',
         imperial: 'Imperial',
+        about_legal: 'Über & Rechtliches',
+        version: 'Version',
+        privacy_policy: 'Datenschutzrichtlinie',
+        terms_of_service: 'Nutzungsbedingungen',
+        copyright_notice: '© 2025 WorthIt. Alle Rechte vorbehalten.',
     },
     fr: {
         pizza: 'Pizza',
@@ -182,5 +187,10 @@ export const translations = {
         unit_system: 'Système d\'unités',
         metric: 'Métrique',
         imperial: 'Impérial',
+        about_legal: 'À propos et juridique',
+        version: 'Version',
+        privacy_policy: 'Politique de confidentialité',
+        terms_of_service: 'Conditions d\'utilisation',
+        copyright_notice: '© 2025 WorthIt. Tous droits réservés.',
     }
 };

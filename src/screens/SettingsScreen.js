@@ -2,7 +2,8 @@ import React from 'react';
 import { StyleSheet, Text, View, Switch, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useApp, APP_CURRENCIES } from '../context/AppContext';
-import { Globe, Moon, Sun, DollarSign, Ruler } from 'lucide-react-native';
+import { Globe, Moon, Sun, DollarSign, Ruler, Info, ChevronRight } from 'lucide-react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const LANGUAGES = [
     { code: 'en', label: 'English' },
@@ -18,6 +19,7 @@ const UNIT_SYSTEMS = [
 
 export default function SettingsScreen() {
     const { theme, toggleTheme, locale, switchLanguage, currency, switchCurrency, unitSystem, switchUnitSystem, t, colors } = useApp();
+    const navigation = useNavigation();
     const isDark = theme === 'dark';
 
     return (
@@ -132,6 +134,17 @@ export default function SettingsScreen() {
                             )}
                         </TouchableOpacity>
                     ))}
+                </View>
+
+                {/* About Link */}
+                <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border, marginTop: 20 }]}>
+                    <TouchableOpacity style={styles.row} onPress={() => navigation.navigate('About')}>
+                        <View style={styles.iconLabel}>
+                            <Info color={colors.text} size={24} />
+                            <Text style={[styles.label, { color: colors.text }]}>{t('about_legal')}</Text>
+                        </View>
+                        <ChevronRight color={colors.subText} size={24} />
+                    </TouchableOpacity>
                 </View>
 
             </ScrollView>
