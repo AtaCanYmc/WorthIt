@@ -10,6 +10,16 @@ jest.mock('lucide-react-native', () => ({
     Globe: () => 'GlobeIcon',
     DollarSign: () => 'DollarSignIcon',
     Ruler: () => 'RulerIcon',
+    Info: () => 'InfoIcon',
+    ChevronRight: () => 'ChevronRightIcon',
+}));
+
+// Mock Navigation
+const mockNavigate = jest.fn();
+jest.mock('@react-navigation/native', () => ({
+    useNavigation: () => ({
+        navigate: mockNavigate,
+    }),
 }));
 
 describe('SettingsScreen', () => {
