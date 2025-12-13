@@ -9,7 +9,7 @@ import { calculatePizzaValue } from '../utils/PizzaCalculator';
 
 export default function PizzaScreen() {
     const [deals, setDeals] = useState([]);
-    const { t, colors, theme } = useApp();
+    const { t, colors, theme, addToHistory, getUnitLabel } = useApp();
 
     const handleAddDeal = (deal) => {
         const newDeal = {
@@ -21,6 +21,12 @@ export default function PizzaScreen() {
 
         const newDeals = [...deals, newDeal];
         setDeals(calculatePizzaValue(newDeals));
+
+        // Save to History
+        addToHistory({
+            module: 'pizza',
+            resultSummary: `${deal.quantity}x ${deal.diameter}${getUnitLabel('length')} @ ${deal.price}`,
+        });
     };
 
     const handleClear = () => {

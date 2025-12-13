@@ -24,7 +24,7 @@ export default function CoffeeScreen() {
     const [volume, setVolume] = useState('');
     const [name, setName] = useState('');
     const [selectedPreset, setSelectedPreset] = useState(null);
-    const { t, colors, formatPrice, unitSystem, getUnitLabel } = useApp();
+    const { t, colors, formatPrice, unitSystem, getUnitLabel, addToHistory } = useApp();
 
     const PRESETS = unitSystem === 'metric' ? METRIC_PRESETS : IMPERIAL_PRESETS;
     const unitLabel = getUnitLabel('volume');
@@ -57,6 +57,11 @@ export default function CoffeeScreen() {
 
         const newItems = [...items, newItem];
         setItems(calculateCoffeeValue(newItems));
+
+        addToHistory({
+            module: 'coffee',
+            resultSummary: `Added ${name} (${volume}${unitLabel}) - ${formatPrice(parseFloat(price))}`
+        });
 
         setPrice('');
         setVolume('');

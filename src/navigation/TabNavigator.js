@@ -4,7 +4,8 @@ import PizzaScreen from '../screens/PizzaScreen';
 import CoffeeScreen from '../screens/CoffeeScreen';
 import MarketScreen from '../screens/MarketScreen';
 import SettingsStack from './SettingsStack';
-import { Pizza, Coffee, ShoppingCart, Settings } from 'lucide-react-native';
+import HistoryScreen from '../screens/HistoryScreen';
+import { Pizza, Coffee, ShoppingCart, Settings, History } from 'lucide-react-native';
 import { useApp } from '../context/AppContext';
 
 const Tab = createBottomTabNavigator();
@@ -58,6 +59,16 @@ export default function TabNavigator() {
                     tabBarLabel: t('market'),
                     tabBarIcon: ({ color, size }) => (
                         <ShoppingCart color={color} size={size} />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="History"
+                component={HistoryScreen}
+                options={{
+                    tabBarLabel: t('history'),
+                    tabBarIcon: ({ color, size }) => (
+                        <History color={color} size={size} />
                     ),
                 }}
             />

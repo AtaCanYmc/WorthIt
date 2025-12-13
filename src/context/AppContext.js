@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { translations } from '../i18n/translations';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { HistoryService } from '../services/HistoryService';
 
 const AppContext = createContext();
 
@@ -49,6 +50,7 @@ export const AppProvider = ({ children }) => {
     const [theme, setTheme] = useState('light');
     const [currency, setCurrency] = useState('EUR');
     const [unitSystem, setUnitSystem] = useState('metric'); // 'metric' or 'imperial'
+    const [history, setHistory] = useState([]);
 
     // Load persistence
     useEffect(() => {
@@ -58,17 +60,34 @@ export const AppProvider = ({ children }) => {
                 const storedTheme = await AsyncStorage.getItem('app_theme');
                 const storedCurrency = await AsyncStorage.getItem('app_currency');
                 const storedUnitSystem = await AsyncStorage.getItem('app_unit_system');
+                const storedHistory = await HistoryService.getHistory();
 
                 if (storedLocale) setLocale(storedLocale);
                 if (storedTheme) setTheme(storedTheme);
                 if (storedCurrency) setCurrency(storedCurrency);
                 if (storedUnitSystem) setUnitSystem(storedUnitSystem);
+                setHistory(storedHistory);
             } catch (e) {
                 console.error("Failed to load settings", e);
             }
         };
         loadSettings();
     }, []);
+
+    const addToHistory = async (record) => {
+        const updatedHistory = await HistoryService.saveRecord(record);
+        setHistory(updatedHistory);
+    };
+
+    const removeFromHistory = async (id) => {
+        const updatedHistory = await HistoryService.deleteRecord(id);
+        setHistory(updatedHistory);
+    };
+
+    const clearAllHistory = async () => {
+        await HistoryService.clearHistory();
+        setHistory([]);
+    };
 
     // Save Persistence helpers
     const saveSetting = async (key, value) => {
@@ -154,7 +173,11 @@ export const AppProvider = ({ children }) => {
             switchLanguage,
             switchCurrency,
             switchUnitSystem, // Export switcher
-            getUnitLabel // Export helper
+            getUnitLabel, // Export helper
+            history,
+            addToHistory,
+            removeFromHistory,
+            clearAllHistory
         }}>
             {children}
         </AppContext.Provider>

@@ -9,7 +9,7 @@ export default function MarketScreen() {
     const [prodA, setProdA] = useState({ price: '', quantity: '' });
     const [prodB, setProdB] = useState({ price: '', quantity: '' });
     const [result, setResult] = useState(null);
-    const { t, colors, formatPrice, getUnitLabel } = useApp();
+    const { t, colors, formatPrice, getUnitLabel, addToHistory } = useApp();
     const unitLabel = getUnitLabel('weight');
 
     const handleCompare = () => {
@@ -19,6 +19,14 @@ export default function MarketScreen() {
         const res = compareProducts(a, b);
         setResult(res);
         Keyboard.dismiss();
+
+        const winner = res.betterDeal === 'A' ? t('product_a') : (res.betterDeal === 'B' ? t('product_b') : 'Equal');
+        const savings = res.savingsPercent > 0 ? `(${res.savingsPercent}% cheaper)` : '';
+
+        addToHistory({
+            module: 'market',
+            resultSummary: `Compared A vs B: Winner ${winner} ${savings}`
+        });
     };
 
     const handleClear = () => {

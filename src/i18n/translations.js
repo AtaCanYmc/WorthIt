@@ -46,6 +46,10 @@ export const translations = {
         unit_length: 'Length',
         unit_volume: 'Volume',
         unit_weight: 'Weight',
+        history: 'History',
+        no_history: 'No history yet',
+        clear_history: 'Clear History',
+        record_deleted: 'Record deleted',
         // Dynamic labels handled by getUnitLabel mostly, but good to have keys if needed for complex text
     },
     tr: {
@@ -142,6 +146,10 @@ export const translations = {
         privacy_policy: 'Datenschutzrichtlinie',
         terms_of_service: 'Nutzungsbedingungen',
         copyright_notice: '© 2025 WorthIt. Alle Rechte vorbehalten.',
+        history: 'Verlauf',
+        no_history: 'Kein Verlauf',
+        clear_history: 'Verlauf löschen',
+        record_deleted: 'Eintrag gelöscht',
     },
     fr: {
         pizza: 'Pizza',
@@ -192,5 +200,9 @@ export const translations = {
         privacy_policy: 'Politique de confidentialité',
         terms_of_service: 'Conditions d\'utilisation',
         copyright_notice: '© 2025 WorthIt. Tous droits réservés.',
+        history: 'Historique',
+        no_history: 'Aucun historique',
+        clear_history: 'Effacer l\'historique',
+        record_deleted: 'Enregistrement supprimé',
     }
 };
